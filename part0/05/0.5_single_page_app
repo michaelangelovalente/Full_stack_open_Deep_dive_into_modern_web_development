@@ -1,0 +1,18 @@
+
+browser->server:HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: HTML-Code
+note over browser:
+links in the HTML code causes the browser to request the 
+CSS (/exampleapp/main.css)
+and js ( /exampleapp/spa.js ) file in /exampleapp/
+end note
+browser->server: HTTP https://studies.cs.helsinki.fi/exampleapp/main.css
+
+server-->browser: main.css
+
+browser->server: HTTP GET: https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
+
+browser->server: https://studies.cs.helsinki.fi/exampleapp/data.json
+
+server-->browser: [{"content":"hola","date":"2022-03-07T16:36:09.952Z"},...,{...}]

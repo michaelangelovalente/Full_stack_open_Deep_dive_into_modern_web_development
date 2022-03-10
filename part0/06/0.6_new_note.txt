@@ -1,0 +1,24 @@
+
+note over browser:
+This version of the app will
+send only one request to the server.
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over browser:
+The request contains the payload as JSON-data: 
+{content: "spa", date: "2022-03-09T06:24:33.279Z"}
+content: "spa"
+date: "2022-03-09T06:24:33.279Z"
+end note
+server-->browser: URL status code 201 ( file created)
+note over browser:
+The browser uses the Javascript code it fetched from
+the server to generate html code.
+The JS code rerenders the notes list on the page
+and sends the new note to the server.
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over server:
+The server updates its current 
+version of notes
+end note

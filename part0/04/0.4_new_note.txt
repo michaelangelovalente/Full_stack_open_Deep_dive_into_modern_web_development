@@ -1,0 +1,42 @@
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note over server:
+HTTP satus 302 / redirect. 
+The server asks the browser to do 
+a new HTTP get request to the address: /exampleapp/notes
+end note
+server-->browser: URL redirect: /exampleapp/notes
+
+note over browser:
+The browser reloads the page
+( The reload causes 4 more HTTP requests: main.css, main.js,
+data.json and favicon.ico )
+end note
+
+browser->server:HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-Code
+note over browser:
+links in the HTML code causes the browser to request the CSS (main.css)  and js (main.js) 
+file in /exampleapp/
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+
+browser->server: HTTP GET: https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+
+note over browser:
+The browser starts executing the js-code that
+requests JSON data from the server.
+( > xhttp.open("GET", "/exampleapp/data.json", true) )
+( > xhttp.send() )
+end note
+
+browser->server: https://studies.cs.helsinki.fi/exampleapp/data.json
+
+server-->browser: [{"content":"hola","date":"2022-03-07T16:36:09.952Z"},...,{...}]
+note over browser:
+The browser exectues the even handler
+xhttp.onreadystatechange = function() { ... }
+end note
