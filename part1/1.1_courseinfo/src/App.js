@@ -9,14 +9,28 @@ const Total = (props) => {
   )
 }
 
-/*Content renders the parts and their number of exercises */
-const Content = (props) => {
+
+
+/*Part renders the name and number of exercises of one part.*/
+const Part = (props) => {
   return(
     <>
     <p>{props.partName} {props.exercises}</p>
     </>
   )
 }
+/* Content renders three Part components 
+of which each renders the name and number of exercises */
+const Content = (props) => {
+  return(
+    <div>
+      <Part partName={props.part1} exercises={props.exN1}/>
+      <Part partName={props.part2} exercises={props.exN2}/>
+      <Part partName={props.part3} exercises={props.exN3}/>
+    </div>
+  )
+}
+
 /*Header takes care of rendering the name of the course*/
 const Header = (props) => {
   return(
@@ -24,8 +38,8 @@ const Header = (props) => {
     <h1>{props.name}</h1>
     </>
   )
-  
 }
+
 const App = () => {
   const course = 'Half Stack application development'
   const part1 = 'Fundamentals of React'
@@ -38,9 +52,8 @@ const App = () => {
   return( 
     <div>
       <Header name={course}/>
-      <Content partName={part1} exercises={exercises1} />
-      <Content partName={part2} exercises={exercises2} />
-      <Content partName={part3} exercises={exercises3} />
+      <Content part1={part1} part2={part2} part3={part3} 
+      exN1={exercises1} exN2={exercises2} exN3={exercises3} />
       <Total ex1={exercises1} ex2={exercises2} ex3={exercises3}/>
     </div>
   )
