@@ -1,8 +1,6 @@
 
 import React, {useState} from 'react';
 import REACTDOM from 'react-dom'
-
-const Display = props => <div>{props.value}</div>
 const Button = (props) => {
    return(
     <button onClick={props.handleClick}>{props.text}</button>
@@ -18,18 +16,13 @@ const App = () => {
         setValue(newValue)
     }
     
-    //This is a mistake! ( It is bad practice to define a component inside another component)
-    /**
-     * This may cause problems, due to react treating a component defined inside of another 
-     * component as a new component on every render
-     * This doesn't allow react to optimize the component
-    */
-    
     return(
         <div>
-            
-            <Display value={value}/>
-
+            {value}
+            {
+                /*1000, 0, value +1
+                */
+            }
             <Button handleClick={ () => setToValue( 1000 )} text={'thousand'}/>
             <Button handleClick={ () => setToValue( 0 )} text={'reset'} />
             <Button handleClick={ () => setToValue( value + 1)} text={'increment'} />

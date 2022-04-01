@@ -1,8 +1,6 @@
 
 import React, {useState} from 'react';
 import REACTDOM from 'react-dom'
-
-const Display = props => <div>{props.value}</div>
 const Button = (props) => {
    return(
     <button onClick={props.handleClick}>{props.text}</button>
@@ -24,7 +22,7 @@ const App = () => {
      * component as a new component on every render
      * This doesn't allow react to optimize the component
     */
-    
+    const Display = props => <div>{props.value}</div>
     return(
         <div>
             
@@ -39,3 +37,6 @@ const App = () => {
 }
 
 export default App
+
+
+/**Correct way: */
