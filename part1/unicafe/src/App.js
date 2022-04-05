@@ -1,10 +1,9 @@
 import {useState} from 'react'
 /**
- * 1.8 unicafe step3
+ * 1.9 unicafe step4
  * 
- * Refactor your application so that displaying the statistics is 
- * extracted into its own Statistics component. 
- * The state of the application should remain in the App root component.
+ * Change your application to display statistics 
+ * only once feedback has been gathered.
  * 
  */
 const buttonStyle = {
@@ -32,19 +31,21 @@ const StatVal = ({text, val, optional}) =>  <div>{text} {val} {optional}</div>
 
 const Statistics = (props) => {
   const all_values = () => props.value_g + props.value_n + props.value_b
+  let n_vals = all_values()
+
+  if( n_vals == 0 ){
+     return (
+       <div>
+         <h1>statistics</h1>
+          <p>No feedback given</p>
+       </div>
+     )
+  }
   const avg = () => {
-    let n_vals = all_values()
-    if( n_vals === 0 ){
-      return 0
-    }
     return (props.value_g - props.value_b)/ n_vals
   }
 
   const pos_percent = () =>{
-    let n_vals = all_values()
-    if( n_vals === 0 ){
-      return 0
-    }
     return (props.value_g * 100)/n_vals
   }
 
