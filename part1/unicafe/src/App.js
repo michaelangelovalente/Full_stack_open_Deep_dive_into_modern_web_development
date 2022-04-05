@@ -1,10 +1,10 @@
 import {useState} from 'react'
-/**1.6 unicafe step1
+/**
+ * 1.7 unicafe step2
  * 
- * The app needs to work only
- * during single browser session.
- * 
- * A refresh may cause the collected feedback to disappear.
+ * Expand your application so that it shows more statistics about 
+ * the gathered feedback: the total number of collected feedback, 
+ * the average score (good: 1, neutral: 0, bad: -1) and the percentage of positive feedback.
  * 
  */
 const buttonStyle = {
@@ -28,9 +28,26 @@ const Feedback = (props) => {
 }
 
 
-const StatVal = ({text, val}) =>  <div>{text} {val} </div>
+const StatVal = ({text, val, optional}) =>  <div>{text} {val} {optional}</div>
 
 const Statistics = (props) => {
+  const all_values = () => props.value_g + props.value_n + props.value_b
+  const avg = () => {
+    let n_vals = all_values()
+    if( n_vals === 0 ){
+      return 0
+    }
+    return (props.value_g - props.value_b)/ n_vals
+  }
+
+  const pos_percent = () =>{
+    let n_vals = all_values()
+    if( n_vals === 0 ){
+      return 0
+    }
+    return (props.value_g * 100)/n_vals
+  }
+
   return(
     <div>
       <h1>statistics</h1>    
@@ -38,6 +55,11 @@ const Statistics = (props) => {
         <StatVal text={props.text_g} val={props.value_g}/>
         <StatVal text={props.text_n} val={props.value_n}/>
         <StatVal text={props.text_b} val={props.value_b}/>
+
+        <StatVal text={props.text_all} val={all_values()}/>
+        <StatVal text={props.text_average} val={avg()} />
+        <StatVal text={props.text_positive} val={pos_percent()} optional={"%"} />
+        
       </div>
     </div>
     
@@ -70,9 +92,14 @@ const App = () => {
     <Feedback handleGood={() => funcHandleGood(good+1) }
               handleNeutral ={ () => funcHandleNeutral(neutral+1)}
               handleBad={ ()=> funcHandleBad(bad+1) }/>
-              
+
     <Statistics text_g={'good'} text_n={'neutral'} text_b={'bad'} 
-                value_g={good} value_n={neutral} value_b={bad}/>
+                value_g={good} value_n={neutral} value_b={bad}
+
+                text_all={'all'}
+                text_average={'average'}
+                text_positive={'positive'} 
+                />
     </>
     
   )
