@@ -1,10 +1,10 @@
 import {useState} from 'react'
 /**
- * 1.7 unicafe step2
+ * 1.8 unicafe step3
  * 
- * Expand your application so that it shows more statistics about 
- * the gathered feedback: the total number of collected feedback, 
- * the average score (good: 1, neutral: 0, bad: -1) and the percentage of positive feedback.
+ * Refactor your application so that displaying the statistics is 
+ * extracted into its own Statistics component. 
+ * The state of the application should remain in the App root component.
  * 
  */
 const buttonStyle = {
