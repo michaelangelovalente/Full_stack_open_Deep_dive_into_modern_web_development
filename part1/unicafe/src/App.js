@@ -1,9 +1,14 @@
 import {useState} from 'react'
 /**
- * 1.9 unicafe step4
+ * 1.10 unicafe step5
  * 
- * Change your application to display statistics 
- * only once feedback has been gathered.
+ * Extract the following two components:
+ * 
+ *-> Button for defining the buttons used for submitting feedback
+ *-> StatisticLine for displaying a single statistic, e.g. the average score.
+ * 
+ * To be clear: the StatisticLine component always displays a single statistic, 
+ * meaning that the application uses multiple components for rendering all of the statistics:
  * 
  */
 const buttonStyle = {
@@ -27,7 +32,7 @@ const Feedback = (props) => {
 }
 
 
-const StatVal = ({text, val, optional}) =>  <div>{text} {val} {optional}</div>
+const StatisticLine = ({text, value, optional}) =>  <div>{text} {value} {optional}</div>
 
 const Statistics = (props) => {
   const all_values = () => props.value_g + props.value_n + props.value_b
@@ -53,13 +58,13 @@ const Statistics = (props) => {
     <div>
       <h1>statistics</h1>    
       <div>
-        <StatVal text={props.text_g} val={props.value_g}/>
-        <StatVal text={props.text_n} val={props.value_n}/>
-        <StatVal text={props.text_b} val={props.value_b}/>
+        <StatisticLine text={props.text_g} value={props.value_g}/>
+        <StatisticLine text={props.text_n} value={props.value_n}/>
+        <StatisticLine text={props.text_b} value={props.value_b}/>
 
-        <StatVal text={props.text_all} val={all_values()}/>
-        <StatVal text={props.text_average} val={avg()} />
-        <StatVal text={props.text_positive} val={pos_percent()} optional={"%"} />
+        <StatisticLine text={props.text_all} value={ all_values()}/>
+        <StatisticLine text={props.text_average} value={avg()} />
+        <StatisticLine text={props.text_positive} value={pos_percent()} optional={"%"} />
         
       </div>
     </div>
