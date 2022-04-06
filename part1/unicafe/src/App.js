@@ -1,14 +1,8 @@
 import {useState} from 'react'
 /**
- * 1.10 unicafe step5
  * 
- * Extract the following two components:
- * 
- *-> Button for defining the buttons used for submitting feedback
- *-> StatisticLine for displaying a single statistic, e.g. the average score.
- * 
- * To be clear: the StatisticLine component always displays a single statistic, 
- * meaning that the application uses multiple components for rendering all of the statistics:
+ * 1.11 unicafe step6
+ * Display the statistics in an HTML table.
  * 
  */
 const buttonStyle = {
@@ -32,7 +26,15 @@ const Feedback = (props) => {
 }
 
 
-const StatisticLine = ({text, value, optional}) =>  <div>{text} {value} {optional}</div>
+const StatisticLine = ({text, value, optional}) =>{
+  return(
+    <tr>
+      <td>{text}</td>
+      <td> {value}</td>
+      <td> {optional}</td>
+    </tr>
+  )
+} 
 
 const Statistics = (props) => {
   const all_values = () => props.value_g + props.value_n + props.value_b
@@ -57,16 +59,17 @@ const Statistics = (props) => {
   return(
     <div>
       <h1>statistics</h1>    
-      <div>
-        <StatisticLine text={props.text_g} value={props.value_g}/>
-        <StatisticLine text={props.text_n} value={props.value_n}/>
-        <StatisticLine text={props.text_b} value={props.value_b}/>
+      <table>
+        <tbody>
+          <StatisticLine text={props.text_g} value={props.value_g}/>
+          <StatisticLine text={props.text_n} value={props.value_n}/>
+          <StatisticLine text={props.text_b} value={props.value_b}/>
 
-        <StatisticLine text={props.text_all} value={ all_values()}/>
-        <StatisticLine text={props.text_average} value={avg()} />
-        <StatisticLine text={props.text_positive} value={pos_percent()} optional={"%"} />
-        
-      </div>
+          <StatisticLine text={props.text_all} value={ all_values()}/>
+          <StatisticLine text={props.text_average} value={avg()} />
+          <StatisticLine text={props.text_positive} value={pos_percent()} optional={"%"} />
+        </tbody>
+      </table>
     </div>
     
     
