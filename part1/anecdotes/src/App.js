@@ -1,14 +1,21 @@
 import {useState} from 'react'
 
 /**
- * 1.12 anecdotes step 1
+ * 1.13 anecdotes step 1
+ *  -->  Solution version with key->val object.
+ * 
  *  Add the array of oneliners showed on the site.
  * 
  *  Add a button that can be clicked to display a 
  *  random anecdote from the field of software engineering:
- */
+ ****/
 
-const Button = ({text, handleFunc}) => <button onClick={handleFunc}>{text}</button>
+const buttonStyle = {
+  margin: "3px",
+  border: '2px grey solid',
+}
+
+const Button = ({text, handleFunc, style}) => <button onClick={handleFunc} style={buttonStyle}>{text}</button>
 const Anecdotes = (props) => {
   return(
     <div>
@@ -16,6 +23,8 @@ const Anecdotes = (props) => {
     </div>
   )
 }
+
+const Votes = (props) => <div>has {props.numberOfVotes} votes</div>
 
 const App = () => {
   const anecdotes = [
@@ -29,17 +38,32 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
-  const [vote, setVote] = useState(0)
+
+  
+  const [vote, setVote] = useState({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 })
 
   const randNum = () => {
     let retval = Math.floor(Math.random() * anecdotes.length)
     setSelected(retval)
   }
 
+  const addVote = (num) => {
+    
+    let points = {...vote}
+    points[selected]+=1
+    setVote(points)
+
+  }
+  
+
+
   return(
     <div>
       <Anecdotes anecdotes={anecdotes[selected] }/>
+      <Votes numberOfVotes={vote[selected]}/>
+      <Button text="votes" handleFunc={()=> addVote(vote)}/>
       <Button text="next anecdote" handleFunc={()=> randNum() } />
+      
     </div>
   )
 }
