@@ -1,13 +1,13 @@
 import {useState} from 'react'
 
 /**
- * 1.13 anecdotes step 1
- *  -->  Solution version with Array.
+ * 1.14*: anecdotes step3
  * 
- *  Add the array of oneliners showed on the site.
+ * Now implement the final version of
+ * the application that displays the anecdote
+ * with the largest number of votes.
  * 
- *  Add a button that can be clicked to display a 
- *  random anecdote from the field of software engineering:
+ * 
  ****/
 
 const buttonStyle = {
@@ -19,12 +19,32 @@ const Button = ({text, handleFunc, style}) => <button onClick={handleFunc} style
 const Anecdotes = (props) => {
   return(
     <div>
-      {props.anecdotes}
+      <h1>{props.header}</h1>
+      <div>
+        {props.anecdotes}
+      </div>
     </div>
+    
   )
 }
 
 const Votes = (props) => <div>has {props.numberOfVotes} votes</div>
+
+const AnecdoteMaxVotes = (props) => {
+  if( props.maxVotes == -1 ){
+    return(
+      <div>
+        <Anecdotes anecdotes={"No anecdote was voted"} header={props.textForH}/>
+      </div>
+    )
+  }
+  return(
+    <div>
+      <Anecdotes anecdotes={props.anecdoteWithMaxV} header={props.textForH}/>
+      <Votes numberOfVotes={props.maxNumVotes}/>
+    </div>
+  )
+}
 
 const App = () => {
   const anecdotes = [
@@ -38,7 +58,7 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
-
+  const [max, setMax] = useState(-1)
   
   const [vote, setVote] = useState(new Array(anecdotes.length).fill(0))
 
@@ -50,17 +70,26 @@ const App = () => {
   const addVote = () => {
     let points = [...vote]
     points[selected]+=1
+    if( max === -1 || points[max] < points[selected]){
+      setMax( selected )
+    } 
     setVote(points)
+   
   }
   
 
   return(
-    <div>
-      <Anecdotes anecdotes={anecdotes[selected] }/>
-      <Votes numberOfVotes={vote[selected]}/>
-      <Button text="votes" handleFunc={()=> addVote()}/>
-      <Button text="next anecdote" handleFunc={()=> randNum() } />
-    </div>
+    <>
+      <div>
+        <Anecdotes anecdotes={anecdotes[selected]} header='Anecdote of the day'/>
+        <Votes numberOfVotes={vote[selected]}/>
+        <Button text="votes" handleFunc={()=> addVote()}/>
+        <Button text="next anecdote" handleFunc={()=> randNum() } />
+      </div>
+      <AnecdoteMaxVotes textForH="Anecdote with most votes" 
+        maxVotes={max} anecdoteWithMaxV={anecdotes[max]} maxNumVotes={vote[max]}/>
+      
+    </>
   )
 }
 export default App;
