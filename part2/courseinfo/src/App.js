@@ -1,10 +1,8 @@
 /**
  * 
- * Part 2.2 course information step7
+ * Part 2.3 course information step8
  * 
- * The page has to also show 
- * the Sum of the exercises of 
- * course.
+ * Use reduce() to sum the number of exercises.
  * 
  */
 
