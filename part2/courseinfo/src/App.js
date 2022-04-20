@@ -1,6 +1,7 @@
 
 
 /*Total renders the total number of exercises.*/
+/*
 const Total = (props) => {
   return(
     <>
@@ -8,66 +9,101 @@ const Total = (props) => {
     </>
   )
 }
+*/
 
 
 
-/*Part renders the name and number of exercises of one part.*/
-const Part = (props) => {
-  return(
-    <>
-    <p>{props.partName} {props.exercises}</p>
-    </>
-  )
-}
-/* Content renders three Part components 
-of which each renders the name and number of exercises */
-const Content = (props) => {
+
+
+/**
+ * 
+ * Part 2.1 course information step6
+ * The exercises teaches well how to start using 
+ * the map() high order function.
+ * 
+ * Define a component responsible for formatting a single course called
+ * 'Course'
+ * Course component will have the following structure 
+ * App
+ *  Course
+ *    Header
+ *    Content
+ *      Part
+ *      Part
+ *      ...
+ * 
+ * - There is no need for the sum of the exercises.
+ * - The app must work regardless of the number of parts a course has.
+ * - the console must not show errors
+ * 
+ */
+
+
+const Course = ( { course } ) => {
   return(
     <div>
-      <Part partName={props.partsContent.parts[0].name} exercises={props.partsContent.parts[0].exercises}/>
-      <Part partName={props.partsContent.parts[1].name} exercises={props.partsContent.parts[1].exercises}/>
-      <Part partName={props.partsContent.parts[2].name} exercises={props.partsContent.parts[2].exercises}/>
+      <Header  courseName={ course.name } />
+      <Content partsContent={ course.parts} />
     </div>
   )
 }
 
-/*Header takes care of rendering the name of the course*/
 const Header = (props) => {
   return(
     <>
-    <h1>{props.courseName.name}</h1>
+    <h1>{props.courseName}</h1>
     </>
   )
 }
 
 
+const Content = (props) => {
+  const { partsContent } = props
+  return(
+    <div>
+      {
+        partsContent.map( part =>
+          <Part key={part.id} 
+            partName={part.name} partExercises={part.exercises} />
+        )
+      }
+      
+    </div>
+  )
+}
+
+const Part = (props) => {
+  return(
+    <>
+    <p>{props.partName} {props.partExercises}</p>
+    </>
+  )
+}
 
 const App = () => {
   const course = {
+    id: 1,
     name: 'Half Stack application development',
     parts: [
       {
         name: 'Fundamentals of React',
-        exercises: 10
+        exercises: 10,
+        id: 1
       },
       {
         name: 'Using props to pass data',
         exercises: 7,
+        id: 2
       },
       {
         name: 'State of a component',
         exercises: 14,
+        id: 3
       }
     ]
   }
   
   
-  return( 
-    <div>
-      <Header courseName={course}/>
-      <Content partsContent={course}/>
-      <Total parts={course}/>
-    </div>
-  )
+  return <Course course={course}/>
 }
 export default App
