@@ -1,40 +1,10 @@
-
-
-/*Total renders the total number of exercises.*/
-/*
-const Total = (props) => {
-  return(
-    <>
-    <p>Number of exercises {props.parts.parts[0].exercises + props.parts.parts[1].exercises + props.parts.parts[2].exercises}</p>
-    </>
-  )
-}
-*/
-
-
-
-
-
 /**
  * 
- * Part 2.1 course information step6
- * The exercises teaches well how to start using 
- * the map() high order function.
+ * Part 2.2 course information step7
  * 
- * Define a component responsible for formatting a single course called
- * 'Course'
- * Course component will have the following structure 
- * App
- *  Course
- *    Header
- *    Content
- *      Part
- *      Part
- *      ...
- * 
- * - There is no need for the sum of the exercises.
- * - The app must work regardless of the number of parts a course has.
- * - the console must not show errors
+ * The page has to also show 
+ * the Sum of the exercises of 
+ * course.
  * 
  */
 
@@ -44,9 +14,23 @@ const Course = ( { course } ) => {
     <div>
       <Header  courseName={ course.name } />
       <Content partsContent={ course.parts} />
+      <Total partsNumOfEx={course.parts}/>
     </div>
   )
 }
+
+const Total = ({ partsNumOfEx }) => {
+  let totalAmount = partsNumOfEx.reduce( ( prevVal, currVal ) => {
+    return prevVal + currVal.exercises
+  }, 0 )
+  
+  return(
+    <>
+    <p> <b>Total of {totalAmount} exercises </b></p>
+    </>
+  )
+}
+
 
 const Header = (props) => {
   return(
@@ -99,6 +83,11 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
       }
     ]
   }
