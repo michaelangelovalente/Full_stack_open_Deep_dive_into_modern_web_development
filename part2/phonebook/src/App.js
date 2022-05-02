@@ -1,12 +1,17 @@
 /**
- * 2.6 The Phonebook Step1.
+ * 2.7 The Phonebook Step2.
+ * 
+ * Prevent the user from being able
+ * to add names that already exist in the phonebook.
+ * 
+ * Issue a warning alert command when such an action is attempted.
  * 
  */
 
 import { useState } from 'react'
+import _ from 'lodash'
 
 const Name = ({ pName }) =>{
-  //console.log("refreshed: ", pName)
   return(
     <div>{pName}</div>
   )
@@ -14,23 +19,35 @@ const Name = ({ pName }) =>{
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {id: 0, name: 'Arto Hellas' }
+    {name: 'Arto Hellas' }, 
+    {name: 'Bart Simpsons'}
   ])
 
   const [newName, setNewName] = useState('')
+  const [include, setInclude] = useState( true )
 
 
   const addName =(event)=> {
     event.preventDefault() // Prevents default action of "onSubmit"/submitting forms
-    setPersons( persons.concat( { id:persons.length , name: newName } ))
-    setNewName('')
+    const newPerson = { name: newName }
+    
+    // Is this the best way to do this???
+    if( (persons.filter( person => person.name === newPerson.name )).length === 0 ){
+      console.log("unique")
+      setPersons( persons.concat( newPerson ))
+      setNewName('')
+    }else{
+      alert(`${newPerson.name} is already added to the phonebook`)
+    }
 
+    
+    
+
+ 
   }
 
   const handleChange =(event)=> {
-    //console.log('event target:', event.target)
     setNewName(event.target.value)
-
   }
 
  return(
