@@ -1,14 +1,49 @@
 /**
- * 2.8 The Phonebook Step3.
+ * 2.9 The Phonebook Step4.
  * 
- * Expand your application by allowing users 
- * to add phone numbers to the phone book. 
- * You will need to add a second input element to the 
- * form (along with its own event handler).
+ * Implement a search field that can be used to filter 
+ * the list of people by name.
+ * 
  */
 
 import { useState } from 'react'
 import _ from 'lodash'
+
+const InformationTable = ({pSearch, persons}) =>{
+  console.log("persons",persons)
+  console.log("person search", pSearch)
+  if( pSearch === ''){
+      console.log("Empty")
+      return (
+        <>
+        {
+        
+          persons.map( person => {
+            return <Information key={person.id} pName={person.name} pNumber={person.number}/> 
+          })
+        }
+        
+        </>
+        
+      )
+  }else{
+    const filteredPersons = persons.filter( person => { 
+      return person.name.includes( pSearch )
+     } )
+
+     console.log('tmp person', filteredPersons)
+    return(
+      <>
+      {
+        filteredPersons.map( person => {
+          return <Information key={person.id} pName={person.name} pNumber={person.number} />
+        })
+      }
+      </>
+    )
+    
+  }
+}
 
 const Information = ({ pName, pNumber }) =>{
   return(
@@ -18,17 +53,21 @@ const Information = ({ pName, pNumber }) =>{
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {name: 'Arto Hellas', number:'39-44-5323523'}, 
-    {name: 'Bart Simpsons', number:'40-55-6433523'}
+    {id:1, name: 'Arto Hellas', number:'39-44-5323523', show: true}, 
+    {id:2, name: 'Bart Simpsons', number:'40-55-6433523', show: true},
+    {id:3, name: 'Lada Lovelace', number:'49-66-63453523', show: true},
+    {id:4, name: 'bArt SImpsons', number:'40-55-6433523', show: true},
+    {id:5, name: 'BartOLOMEus Simpsons', number:'40-55-6433523', show: true}
   ])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [ search, setSearch ] = useState('')
 
 
   const addName =(event)=> {
     event.preventDefault() // Prevents default action of "onSubmit"/submitting forms
-    const newPerson = { name: newName, number: newNumber }
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1, show: true }
     
     // Is this the best way to do this???
     if( (persons.filter( person => person.name === newPerson.name )).length === 0 ){
@@ -38,11 +77,6 @@ const App = () => {
     }else{
       alert(`${newPerson.name} is already added to the phonebook`)
     }
-
-    
-    
-
- 
   }
 
   const handleChangeName =(event)=> {
@@ -51,20 +85,37 @@ const App = () => {
   const handleChangeNumber =(event)=>{
     setNewNumber(event.target.value)
   }
+
+  const handleFilter = (event) =>{
+    setSearch(event.target.value)
+    console.log( event.target.value )
+  }
  return(
     <div>
-      
+       
       <h2>Phonebook</h2>
+      
+      <div>{/**Is this fine outside the form or without a form?*/}
+        filter show with <input 
+                            value={search}
+                            placeholder={"Enter a filter"}
+                            onChange={handleFilter}
+                          />
+      </div>
+      
+      <h2>add a new</h2>
       <form onSubmit={addName}>
         <div>
           name: <input
                   value={newName}
+                  placeholder={"Enter a name"}
                   onChange={handleChangeName}                  
                 />
         </div>
         <div>
           number: < input 
                     value={newNumber}
+                    placeholder={"Enter a number"}
                     onChange={handleChangeNumber}
                   />
         </div>
@@ -75,12 +126,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-        {
-          persons.map( (person) => {
-            return <Information key={person.name} pName={person.name} pNumber={person.number} />
-          })
-        }
-        
+        <InformationTable pSearch={search} persons={persons} /> 
       </div>
       
     </div>
