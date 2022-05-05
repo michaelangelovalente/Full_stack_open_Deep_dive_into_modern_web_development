@@ -10,38 +10,25 @@ import { useState } from 'react'
 import _ from 'lodash'
 
 const InformationTable = ({pSearch, persons}) =>{
-  console.log("persons",persons)
-  console.log("person search", pSearch)
   if( pSearch === ''){
-      console.log("Empty")
       return (
         <>
         {
-        
-          persons.map( person => {
-            return <Information key={person.id} pName={person.name} pNumber={person.number}/> 
-          })
+          persons.map( person => <Information key={person.id} pName={person.name} pNumber={person.number}/> )
         }
-        
         </>
-        
       )
   }else{
     const filteredPersons = persons.filter( person => { 
-      return person.name.includes( pSearch )
+      return person.name.toLowerCase().includes( pSearch.toLowerCase() )
      } )
-
-     console.log('tmp person', filteredPersons)
     return(
       <>
       {
-        filteredPersons.map( person => {
-          return <Information key={person.id} pName={person.name} pNumber={person.number} />
-        })
+        filteredPersons.map( person => <Information key={person.id} pName={person.name} pNumber={person.number} /> )
       }
       </>
     )
-    
   }
 }
 
@@ -53,11 +40,11 @@ const Information = ({ pName, pNumber }) =>{
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {id:1, name: 'Arto Hellas', number:'39-44-5323523', show: true}, 
-    {id:2, name: 'Bart Simpsons', number:'40-55-6433523', show: true},
-    {id:3, name: 'Lada Lovelace', number:'49-66-63453523', show: true},
-    {id:4, name: 'bArt SImpsons', number:'40-55-6433523', show: true},
-    {id:5, name: 'BartOLOMEus Simpsons', number:'40-55-6433523', show: true}
+    {id:1, name: 'Arto Hellas', number:'39-44-5323523'}, 
+    {id:2, name: 'Bart Simpsons', number:'40-55-6433523'},
+    {id:3, name: 'Lada Lovelace', number:'49-66-63453523'},
+    {id:4, name: 'bArt SImpsons', number:'40-55-6433523'},
+    {id:5, name: 'BartOLOMEw JoJo Simpsons', number:'40-55-6433523'}
   ])
 
   const [newName, setNewName] = useState('')
@@ -85,11 +72,10 @@ const App = () => {
   const handleChangeNumber =(event)=>{
     setNewNumber(event.target.value)
   }
-
   const handleFilter = (event) =>{
     setSearch(event.target.value)
-    console.log( event.target.value )
   }
+
  return(
     <div>
        
