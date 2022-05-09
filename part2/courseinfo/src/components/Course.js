@@ -16,8 +16,8 @@ import React from 'react'
  const Course = ( { course } ) => {
     return(
       <div>
-        <Header  courseName={ course.name } />
-        <Content partsContent={ course.parts} />
+        <Header  courseName={course.name} />
+        <Content partsContent={course.parts} />
         <Total key={course.id} partsNumOfEx={course.parts}/>
       </div>
     )

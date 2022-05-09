@@ -1,8 +1,21 @@
 /**
- * 2.9 The Phonebook Step4.
+ * 2.10 The Phonebook Step5.
  * 
- * Implement a search field that can be used to filter 
- * the list of people by name.
+ * Refactor your application by extracting suitable parts
+ * into  new components.
+ * Maintain the application's state and all event handlers
+ * in the 'App' root component.
+ * 
+ * 
+ * It is sufficient to extract 'three' components from the application.
+ * (
+ *  example:
+ *  - search filter (done)
+ *  - form for adding new people into the phonebook (done)
+ *  - component that renders all people from the phonebook (done)
+ *  - component that renders a single person's details (done)
+ * )
+ * 
  * 
  */
 
@@ -38,6 +51,55 @@ const Information = ({ pName, pNumber }) =>{
   )
 }
 
+const SearchFilter = ({ psearch, handleFilter }) => {
+  return(
+    <>
+      <div>{/**Is this fine outside the form or without a form?*/}
+        filter show with <input 
+                            value={psearch}
+                            placeholder={"Enter a filter"}
+                            onChange={handleFilter}
+                          />
+      </div>
+    </>
+  )
+}
+const Input = (props) => {
+  return(
+    <>
+      <div>
+          {props.text}: <input
+                  value={props.newInput}
+                  placeholder={props.placeholder}
+                  onChange={props.handleChange}                  
+                />
+        </div>
+    </>
+  )
+}
+const AddForm = (props) => {
+  return(
+    <div>
+      
+      <form onSubmit={props.addName}>
+          <Input text={"name"} newInput={props.newName} 
+                 placeholder={"Enter a name"}
+                 handleChange={props.handleChangeName}
+                 />  
+          
+          <Input text={"number"} newInput={props.newNumber}
+                 placeholder={"Enter a number"} 
+                 handleChange={props.handleChangeNumber}
+                 />
+        
+        <div>
+          <button type="submit">add</button>
+        </div>
+
+      </form>
+    </div>
+  )
+}
 const App = () => {
   const [persons, setPersons] = useState([
     {id:1, name: 'Arto Hellas', number:'39-44-5323523'}, 
@@ -49,7 +111,7 @@ const App = () => {
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [ search, setSearch ] = useState('')
+  const [search, setSearch ] = useState('')
 
 
   const addName =(event)=> {
@@ -80,36 +142,12 @@ const App = () => {
     <div>
        
       <h2>Phonebook</h2>
-      
-      <div>{/**Is this fine outside the form or without a form?*/}
-        filter show with <input 
-                            value={search}
-                            placeholder={"Enter a filter"}
-                            onChange={handleFilter}
-                          />
-      </div>
-      
+      <SearchFilter pSearch={search} handleFilter={handleFilter}/>
       <h2>add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input
-                  value={newName}
-                  placeholder={"Enter a name"}
-                  onChange={handleChangeName}                  
-                />
-        </div>
-        <div>
-          number: < input 
-                    value={newNumber}
-                    placeholder={"Enter a number"}
-                    onChange={handleChangeNumber}
-                  />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
+      <AddForm addName={addName} newName={newName} newNumber={newNumber}
+               handleChangeName={handleChangeName} 
+               handleChangeNumber={handleChangeNumber}/>
 
-      </form>
       <h2>Numbers</h2>
       <div>
         <InformationTable pSearch={search} persons={persons} /> 
