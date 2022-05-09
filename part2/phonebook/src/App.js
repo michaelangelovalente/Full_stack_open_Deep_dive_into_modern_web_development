@@ -51,7 +51,7 @@ const Information = ({ pName, pNumber }) =>{
   )
 }
 
-const SearchFilter = ({ psearch, handleFilter }) => {
+const Filter = ({ psearch, handleFilter }) => {
   return(
     <>
       <div>{/**Is this fine outside the form or without a form?*/}
@@ -64,32 +64,32 @@ const SearchFilter = ({ psearch, handleFilter }) => {
     </>
   )
 }
-const Input = (props) => {
+const Input = ({text, newInput, placeholder, handleChange}) => {
   return(
     <>
       <div>
-          {props.text}: <input
-                  value={props.newInput}
-                  placeholder={props.placeholder}
-                  onChange={props.handleChange}                  
+          {text}: <input
+                  value={newInput}
+                  placeholder={placeholder}
+                  onChange={handleChange}                  
                 />
         </div>
     </>
   )
 }
-const AddForm = (props) => {
+const PersonForm = ({ addName, newName, handleChangeName, newNumber, handleChangeNumber }) => {
   return(
     <div>
       
-      <form onSubmit={props.addName}>
-          <Input text={"name"} newInput={props.newName} 
+      <form onSubmit={addName}>
+          <Input text={"name"} newInput={newName} 
                  placeholder={"Enter a name"}
-                 handleChange={props.handleChangeName}
+                 handleChange={handleChangeName}
                  />  
           
-          <Input text={"number"} newInput={props.newNumber}
+          <Input text={"number"} newInput={newNumber}
                  placeholder={"Enter a number"} 
-                 handleChange={props.handleChangeNumber}
+                 handleChange={handleChangeNumber}
                  />
         
         <div>
@@ -142,9 +142,9 @@ const App = () => {
     <div>
        
       <h2>Phonebook</h2>
-      <SearchFilter pSearch={search} handleFilter={handleFilter}/>
+      <Filter pSearch={search} handleFilter={handleFilter}/>
       <h2>add a new</h2>
-      <AddForm addName={addName} newName={newName} newNumber={newNumber}
+      <PersonForm addName={addName} newName={newName} newNumber={newNumber}
                handleChangeName={handleChangeName} 
                handleChangeNumber={handleChangeNumber}/>
 
