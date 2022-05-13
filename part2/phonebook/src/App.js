@@ -1,26 +1,15 @@
 /**
- * 2.10 The Phonebook Step5.
+ * 2.11 The Phonebook Step6.
+ * Modify the application such that the initial 
+ * state of the data is fetched from the server using the axios-library. 
  * 
- * Refactor your application by extracting suitable parts
- * into  new components.
- * Maintain the application's state and all event handlers
- * in the 'App' root component.
- * 
- * 
- * It is sufficient to extract 'three' components from the application.
- * (
- *  example:
- *  - search filter (done)
- *  - form for adding new people into the phonebook (done)
- *  - component that renders all people from the phonebook (done)
- *  - component that renders a single person's details (done)
- * )
- * 
+ * Complete the fetching with an Effect hook.
  * 
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import _ from 'lodash'
+import axios from 'axios'
 
 const InformationTable = ({pSearch, persons}) =>{
   if( pSearch === ''){
@@ -101,18 +90,24 @@ const PersonForm = ({ addName, newName, handleChangeName, newNumber, handleChang
   )
 }
 const App = () => {
-  const [persons, setPersons] = useState([
-    {id:1, name: 'Arto Hellas', number:'39-44-5323523'}, 
-    {id:2, name: 'Bart Simpsons', number:'40-55-6433523'},
-    {id:3, name: 'Lada Lovelace', number:'49-66-63453523'},
-    {id:4, name: 'bArt SImpsons', number:'40-55-6433523'},
-    {id:5, name: 'BartOLOMEw JoJo Simpsons', number:'40-55-6433523'}
-  ])
+
+
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch ] = useState('')
 
+  useEffect( () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then( response => {
+        console.log('data')
+        console.log(response)
+        setPersons(response.data)
+      } )
+  }, [] )
 
   const addName =(event)=> {
     event.preventDefault() // Prevents default action of "onSubmit"/submitting forms
