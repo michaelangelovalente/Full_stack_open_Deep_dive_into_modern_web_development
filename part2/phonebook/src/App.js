@@ -1,11 +1,4 @@
-/**
- * 2.11 The Phonebook Step6.
- * Modify the application such that the initial 
- * state of the data is fetched from the server using the axios-library. 
- * 
- * Complete the fetching with an Effect hook.
- * 
- */
+
 
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
