@@ -27,53 +27,93 @@
 import { useState, useEffect } from 'react'
 import axios from'axios'
 
-const CountryTable =(props)=> {
-    const countryFilter = props.countries
-    .map( (country) => { 
-        return {name:country.name, area: country.area, capital: country.capital, flags: country.flags, language: country.languages } })
-        .filter( searchedCountry =>{ return (searchedCountry.name.common + searchedCountry.name.official)
-                                                .toLowerCase()
-                                                .includes( props.searchcountry.toLowerCase() ) } )
+const CapitalandArea = ({ capital, area })=> {
+    return(
+        <div>
+            capital { capital }<br/>
+            area { area }
+        </div>
+    )
+}
+
+const Lang = ({ language }) =>{
+    return(
+        <li>{language}</li>
+    )
+}
+const Languages = ({languages}) => {
+    return(
+        <div>
+            <ul>
+                {
+                    languages.map( (language, idx) =>{
+                        return <Lang key={idx} language={language}/>
+                    } )
+                }
+            </ul>
+        </div>
+    )
+}
+
+const Image = ( {img, text}) => {
+    return(
+        <div>
+            <img src = {img} alt={text} />
+        </div>
+    )
+}
+const OneResult = ({countryFilter}) => {
+
+    const langs = Object.keys( countryFilter.language ).map( keylang => {
+        return countryFilter.language[keylang]
+    } )
+
+    return(
+        <>
+            <h1 >{countryFilter.name.common}</h1>
+            <CapitalandArea capital={countryFilter.capital} area ={countryFilter.area}/>
+            <h3>languages:</h3>
+            <Languages languages={ langs } />
+            <Image img={countryFilter.flags.png} text={"flag"}/>
+        </>
+    )
+
+}
+
+
+const Names = (props) =>{
+    return(
+        <div>{ props.country.common} </div>
+    )
+}
+const CountryNames  = (props) =>{
+    return(
+        <>
+            {
+                props.countryFilter.map( country => {
+                    return <Names key={country.name.official} country={country.name} />
+                } )
+            }
+        </>
+    )
+}
+
+const CountryTable =({ countries, searchcountry}) => {
+
+    const countryFilter = countries.map( country => { 
+        return { name:country.name, area: country.area, capital: country.capital, flags: country.flags, language: country.languages } })
+        .filter( searchedCountry => (searchedCountry.name.common + searchedCountry.name.official).toLowerCase().includes( searchcountry.toLowerCase() ) )
 
     if( countryFilter.length == 1){
-        
-        const singleCountry = countryFilter[0]
-        const keys = Object.keys( singleCountry.language );
-        const langs = keys.map( keylang => {
-            return singleCountry.language[keylang]
-        } )
-
         return(
-                    <div>
-                        <h1 >{singleCountry.name.common}</h1>
-                        <div>
-                            capital {singleCountry.capital} <br/>
-                            area {singleCountry.area}
-                        </div>
-                        <div>
-                            <h3>languages:</h3>
-                            <ul> 
-                                {
-                                    langs.map( (language, idx) => {
-                                        return <li key={idx}>{language}</li>
-                                    })
-                                }
-                                
-                            </ul>
-                        </div>
-                        <div>
-                            <img src = {singleCountry.flags.png} alt="flag" />
-                        </div>
-                    </div>
-                )
+            <div>
+                <OneResult countryFilter={countryFilter[0]}/> 
+            </div>
+        )
     }else if( countryFilter.length <= 10){
         return(
             <div>
-              {
-                  countryFilter.map( country => {
-                     return <div key={country.name.official}> { country.name.common} </div>
-                  } )
-              }
+              <CountryNames countryFilter={countryFilter} />
             </div>
         )
     }else{
@@ -88,6 +128,17 @@ const CountryTable =(props)=> {
     
 }
 
+const SearchBar =({searchcountry, text, handleChangecountry})=>{
+    return(
+        <div>
+            find countries <input
+                                value={searchcountry}
+                                placeholder={text}
+                                onChange={handleChangecountry}
+                            />
+        </div>
+    )
+}
 
 const App = () => {
     const [countries, setCountries] = useState([])
@@ -109,13 +160,7 @@ const App = () => {
     
     return(
         <>
-        <div>
-            find countries <input
-                                value={searchcountry}
-                                placeholder={"Enter a country..."}
-                                onChange={handleChangecountry}
-                            />
-        </div>
+        <SearchBar searchcountry={searchcountry} text={"Enter a country..."} handleChangecountry={handleChangecountry}/>
         <CountryTable countries={countries} searchcountry={searchcountry}/>
         </>
     )
