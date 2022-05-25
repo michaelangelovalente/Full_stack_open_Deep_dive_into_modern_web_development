@@ -82,16 +82,33 @@ const OneResult = ({countryFilter}) => {
 
 
 const Names = (props) =>{
+    const [show, setShow] = useState(false)
+
+    const handleClick =() => {
+        setShow(!show);
+    }
+
+    let countryInformation = "";
+    if( show ){
+        countryInformation = <OneResult countryFilter={props.country}/>
+    }
     return(
-        <div>{ props.country.common} </div>
+        <div>
+            { props.country.name.common}    
+            <button onClick={handleClick}>{show ? 'hide':'show'}</button>
+            <div>
+                {countryInformation}
+            </div>
+        </div>
     )
 }
 const CountryNames  = (props) =>{
+    console.log( props)
     return(
         <>
             {
                 props.countryFilter.map( country => {
-                    return <Names key={country.name.official} country={country.name} />
+                    return <Names key={country.name.official} country={country} />
                 } )
             }
         </>
@@ -142,7 +159,8 @@ const SearchBar =({searchcountry, text, handleChangecountry})=>{
 
 const App = () => {
     const [countries, setCountries] = useState([])
-    const [searchcountry, setSearchcountry] = useState('');
+    const [searchcountry, setSearchcountry] = useState('')
+    
 
     useEffect( () => {
         axios
@@ -158,6 +176,10 @@ const App = () => {
         setSearchcountry(event.target.value)
     }
     
+    const showCountry =(event)=>{
+        event.preventDefault()
+        console.log("Clicked")
+    }
     return(
         <>
         <SearchBar searchcountry={searchcountry} text={"Enter a country..."} handleChangecountry={handleChangecountry}/>
