@@ -63,7 +63,6 @@ const Image = ( {img, text}) => {
     )
 }
 const OneResult = ({countryFilter}) => {
-
     const langs = Object.keys( countryFilter.language ).map( keylang => {
         return countryFilter.language[keylang]
     } )
@@ -81,7 +80,7 @@ const OneResult = ({countryFilter}) => {
 }
 
 
-const Names = (props) =>{
+const Names = ({country}) =>{
     const [show, setShow] = useState(false)
 
     const handleClick =() => {
@@ -90,11 +89,11 @@ const Names = (props) =>{
 
     let countryInformation = "";
     if( show ){
-        countryInformation = <OneResult countryFilter={props.country}/>
+        countryInformation = <OneResult countryFilter={country}/>
     }
     return(
         <div>
-            { props.country.name.common}    
+            { country.name.common}    
             <button onClick={handleClick}>{show ? 'hide':'show'}</button>
             <div>
                 {countryInformation}
@@ -102,12 +101,11 @@ const Names = (props) =>{
         </div>
     )
 }
-const CountryNames  = (props) =>{
-    console.log( props)
+const CountryNames  = ({countryFilter}) =>{
     return(
         <>
             {
-                props.countryFilter.map( country => {
+                countryFilter.map( country => {
                     return <Names key={country.name.official} country={country} />
                 } )
             }
@@ -162,6 +160,8 @@ const App = () => {
     const [searchcountry, setSearchcountry] = useState('')
     
 
+    
+
     useEffect( () => {
         axios
             .get('https://restcountries.com/v3.1/all')
@@ -178,7 +178,6 @@ const App = () => {
     
     const showCountry =(event)=>{
         event.preventDefault()
-        console.log("Clicked")
     }
     return(
         <>
