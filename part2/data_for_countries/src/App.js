@@ -62,10 +62,36 @@ const Image = ( {img, text}) => {
         </div>
     )
 }
-const OneResult = ({countryFilter}) => {
+const OneResult = ({countryFilter, apikey}) => {
+    const [weather, setWeather] = useState([])
+    const [temperature, setTemperature ] = useState([])
+    const [icon, setIcon ] = useState('')
+    const [ windSpeed, setWindSpeed] = useState(-1)
     const langs = Object.keys( countryFilter.language ).map( keylang => {
         return countryFilter.language[keylang]
     } )
+
+    useEffect( () =>{
+        
+        const geolocation = axios
+            .get(`http://api.openweathermap.org/geo/1.0/direct?q=${countryFilter.capital}&limit=${1}&appid=${apikey}`) 
+            .then( response =>{
+                const { lat, lon} = response.data[0];
+
+                axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apikey}`)
+                    .then( w_response =>{   
+                        const {  weather, main, wind  } = w_response.data
+                        setWeather(weather[0]);
+                        setTemperature(main);
+                        setIcon( `http://openweathermap.org/img/wn/${weather[0].icon}@2x.png`)
+                        setWindSpeed( wind.speed )
+
+                    } )
+                
+            })
+        
+    },[])
+    
 
     return(
         <>
@@ -74,13 +100,22 @@ const OneResult = ({countryFilter}) => {
             <h3>languages:</h3>
             <Languages languages={ langs } />
             <Image img={countryFilter.flags.png} text={"flag"}/>
+            <h2>Weather in {countryFilter.capital}</h2>
+            <div>
+                temperature {(temperature.temp/10).toFixed(2)}° Celsius
+                <div>
+                    <div>{weather.description}</div>
+                    <img src={icon} alt={'weather icon'} />
+                    <div>wind {windSpeed} m/s</div>
+                </div>
+            </div>
         </>
     )
 
 }
 
 
-const Names = ({country}) =>{
+const Names = ({country, apikey}) =>{
     const [show, setShow] = useState(false)
 
     const handleClick =() => {
@@ -89,7 +124,7 @@ const Names = ({country}) =>{
 
     let countryInformation = "";
     if( show ){
-        countryInformation = <OneResult countryFilter={country}/>
+        countryInformation = <OneResult apikey={apikey} countryFilter={country}/>
     }
     return(
         <div>
@@ -101,19 +136,19 @@ const Names = ({country}) =>{
         </div>
     )
 }
-const CountryNames  = ({countryFilter}) =>{
+const CountryNames  = ({countryFilter, apikey}) =>{
     return(
         <>
             {
                 countryFilter.map( country => {
-                    return <Names key={country.name.official} country={country} />
+                    return <Names apikey={apikey} key={country.name.official} country={country} />
                 } )
             }
         </>
     )
 }
 
-const CountryTable =({ countries, searchcountry}) => {
+const CountryTable =({ countries, searchcountry, apikey}) => {
 
     const countryFilter = countries.map( country => { 
         return { name:country.name, area: country.area, capital: country.capital, flags: country.flags, language: country.languages } })
@@ -122,13 +157,13 @@ const CountryTable =({ countries, searchcountry}) => {
     if( countryFilter.length == 1){
         return(
             <div>
-                <OneResult countryFilter={countryFilter[0]}/> 
+                <OneResult apikey={apikey} countryFilter={countryFilter[0]}/> 
             </div>
         )
     }else if( countryFilter.length <= 10){
         return(
             <div>
-              <CountryNames countryFilter={countryFilter} />
+              <CountryNames apikey={apikey} countryFilter={countryFilter} />
             </div>
         )
     }else{
@@ -158,9 +193,7 @@ const SearchBar =({searchcountry, text, handleChangecountry})=>{
 const App = () => {
     const [countries, setCountries] = useState([])
     const [searchcountry, setSearchcountry] = useState('')
-    
-
-    
+    const api_key = process.env.REACT_APP_API_KEY
 
     useEffect( () => {
         axios
@@ -182,7 +215,7 @@ const App = () => {
     return(
         <>
         <SearchBar searchcountry={searchcountry} text={"Enter a country..."} handleChangecountry={handleChangecountry}/>
-        <CountryTable countries={countries} searchcountry={searchcountry}/>
+        <CountryTable apikey={api_key} countries={countries} searchcountry={searchcountry}/>
         </>
     )
 }
