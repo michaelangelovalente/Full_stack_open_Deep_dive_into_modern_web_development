@@ -1,4 +1,4 @@
-// Cleaner Syntax for Defining Object Literals
+//Promises and Errors
 import { useState, useEffect } from 'react'
 import Note from './components/Note'
 import noteService from './services/notes'
@@ -19,8 +19,6 @@ const App = () => {
 
   const toggleImportanceOf = (id) => {
     
-    console.log(`importance of ${id} needs to be toggled.`)
-
     //individual notes can be modified in 2 different ways;
     //HTTP request --> HTTP PUT request replaces the entire note.
     // HTTP PATCH request  changes some of the note's properties
@@ -66,6 +64,17 @@ const App = () => {
       .update( id, changedNote)
       .then( returnedNote => {
           setNotes( notes.map( note => note.id !== id ? note : returnedNote ) )
+      })
+      //error handler callback function
+      .catch(error => {
+        alert(
+          `The note ${note.content} was already deleted from the server`
+        )
+        setNotes(notes.filter( n=> n.id !== id )) // Removing an already deleted note
+        // is done through the 'filter' method.
+        //The function returns a new array containing only the items from the list
+        //for which the function that was passed as a parameter returns true for.
+        //Note you shouldn't use alert for normal React applications
       })
   }
 
