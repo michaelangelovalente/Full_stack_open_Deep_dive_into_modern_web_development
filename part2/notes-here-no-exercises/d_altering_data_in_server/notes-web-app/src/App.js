@@ -1,7 +1,7 @@
-// Extracting communication with the back-end into a seperate module.
+// Cleaner Syntax for Defining Object Literals
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Note from './components/Note'
+import noteService from './services/notes'
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -9,42 +9,17 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        setNotes(response.data)
+    noteService
+      .getAll()
+      .then(initialNotes=> {
+        setNotes(initialNotes)
       })
   }, [])
 
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
-      //id: notes.length + 1, //--> we ommit the id proprty since, it is better (?)
-      // to let the server generate ids for our resources
-    }
-
-    axios
-      .post('http://localhost:3001/notes', noteObject)
-      .then( response => {
-        console.log( response )
-        setNotes(notes.concat(response.data))
-        setNewNote('')
-      })
-  }
-
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-  }
 
   const toggleImportanceOf = (id) => {
-    //console.log('importance of ' + id + ' needs to be toggled')
+    
     console.log(`importance of ${id} needs to be toggled.`)
-
-    const url = `http://localhost:3001/notes/${id}` // string template
 
     //individual notes can be modified in 2 different ways;
     //HTTP request --> HTTP PUT request replaces the entire note.
@@ -71,6 +46,7 @@ const App = () => {
 
     //The new note is sent to the BACKEND with a PUT request, where it will
     //replace the old object.
+    /*
     axios.put( url, changedNote).then( response =>{
       console.log( response.data )
       //The callback function sets the component's note state
@@ -85,9 +61,47 @@ const App = () => {
         //id position. In other words, the object returned by the server
         //is added to the array instead.
          )
-    })
+    })*/
+    noteService
+      .update( id, changedNote)
+      .then( returnedNote => {
+          setNotes( notes.map( note => note.id !== id ? note : returnedNote ) )
+      })
   }
 
+
+  const addNote = (event) => {
+    event.preventDefault()
+    const noteObject = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() > 0.5,
+      //id: notes.length + 1, //--> we ommit the id proprty since, it is better (?)
+      // to let the server generate ids for our resources
+    }
+    /*
+    axios
+      .post('http://localhost:3001/notes', noteObject)
+      .then( response => {
+        console.log( response )
+        setNotes(notes.concat(response.data))
+        setNewNote('')
+      })
+    */
+    noteService
+      .create(noteObject)
+      .then( returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
+  }
+
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+  }
+
+  
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
