@@ -1,8 +1,17 @@
 
+/**
+  2.15: Phonebook step7
+  Let's return to our phonebook application.
+
+  Currently, the numbers that are added to the phonebook
+  are not saved to a backend server. Fix this situation.
+
+*/
 
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
-import axios from 'axios'
+import personsService from './services/persons'
+
 
 const InformationTable = ({pSearch, persons}) =>{
   if( pSearch === ''){
@@ -27,11 +36,13 @@ const InformationTable = ({pSearch, persons}) =>{
   }
 }
 
+
 const Information = ({ pName, pNumber }) =>{
   return(
     <div>{pName} {pNumber}</div>
   )
 }
+
 
 const Filter = ({ psearch, handleFilter }) => {
   return(
@@ -46,6 +57,8 @@ const Filter = ({ psearch, handleFilter }) => {
     </>
   )
 }
+
+
 const Input = ({text, newInput, placeholder, handleChange}) => {
   return(
     <>
@@ -59,6 +72,8 @@ const Input = ({text, newInput, placeholder, handleChange}) => {
     </>
   )
 }
+
+
 const PersonForm = ({ addName, newName, handleChangeName, newNumber, handleChangeNumber }) => {
   return(
     <div>
@@ -82,6 +97,8 @@ const PersonForm = ({ addName, newName, handleChangeName, newNumber, handleChang
     </div>
   )
 }
+
+
 const App = () => {
 
 
@@ -91,25 +108,27 @@ const App = () => {
   const [search, setSearch ] = useState('')
 
   useEffect( () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then( response => {
-        console.log('data')
-        console.log(response)
-        setPersons(response.data)
+    personsService
+      .getAll()
+      .then(  personInfo => {
+        setPersons(personInfo)
       } )
   }, [] )
 
   const addName =(event)=> {
     event.preventDefault() // Prevents default action of "onSubmit"/submitting forms
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1, show: true }
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
     
     // Is this the best way to do this???
-    if( (persons.filter( person => person.name === newPerson.name )).length === 0 ){
-      setPersons( persons.concat( newPerson ))
-      setNewName('')
-      setNewNumber('')
+    if( (persons.filter( person => person.name.toLowerCase() === newPerson.name.toLowerCase() )).length === 0 ){
+      personsService
+      .create( newPerson )
+      .then( response => { 
+        setPersons( persons.concat( response ))
+        setNewName('')
+        setNewNumber('')
+      })
+      
     }else{
       alert(`${newPerson.name} is already added to the phonebook`)
     }
@@ -127,14 +146,12 @@ const App = () => {
 
  return(
     <div>
-       
       <h2>Phonebook</h2>
       <Filter pSearch={search} handleFilter={handleFilter}/>
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} newNumber={newNumber}
                handleChangeName={handleChangeName} 
                handleChangeNumber={handleChangeNumber}/>
-
       <h2>Numbers</h2>
       <div>
         <InformationTable pSearch={search} persons={persons} /> 
