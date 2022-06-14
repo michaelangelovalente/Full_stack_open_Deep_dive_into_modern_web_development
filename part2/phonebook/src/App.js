@@ -1,10 +1,23 @@
 
 /**
-  2.16: Phonebook step8
-  Let's return to our phonebook application.
+2.17: Phonebook step9
+Make it possible for users to delete entries from the phonebook. 
+The deletion can be done through a dedicated button for each person in the phonebook list. 
+You can confirm the action from the user by using the window.confirm method.
 
-  Extract the code that handles the communication with the backend into
-  its own module by following the example shown earlier in this part of the course material.
+
+The associated resource for a person in the backend can be deleted by making an HTTP DELETE 
+request to the resource's URL. 
+
+If we are deleting e.g. a person who has the id 2,
+we would have to make an HTTP DELETE request to the URL localhost:3001/persons/2.
+
+No data is sent with the request.
+
+You can make an HTTP DELETE request with the axios library in the same way that 
+we make all of the other requests.
+
+NB: You can't use the name delete for a variable because it's a reserved word in JavaScript. 
 */
 
 import { useState, useEffect } from 'react'
@@ -12,12 +25,16 @@ import _ from 'lodash'
 import personsService from './services/persons'
 
 
-const InformationTable = ({pSearch, persons}) =>{
+const InformationTable = ({pSearch, persons, handleDeletion}) =>{
   if( pSearch === ''){
       return (
         <>
         {
-          persons.map( person => <Information key={person.id} pName={person.name} pNumber={person.number}/> )
+          persons.map( person => <Information key={person.id} 
+                                              pName={person.name}
+                                              pNumber={person.number}
+                                              handleDeletion={() => handleDeletion(person.id)}
+                                              /> )
         }
         </>
       )
@@ -28,7 +45,11 @@ const InformationTable = ({pSearch, persons}) =>{
     return(
       <>
       {
-        filteredPersons.map( person => <Information key={person.id} pName={person.name} pNumber={person.number} /> )
+        filteredPersons.map( person => <Information key={person.id} 
+                                                    pName={person.name} 
+                                                    pNumber={person.number} 
+                                                    handleDeletion={() => handleDeletion(person.id)}
+                                                    /> )
       }
       </>
     )
@@ -36,9 +57,16 @@ const InformationTable = ({pSearch, persons}) =>{
 }
 
 
-const Information = ({ pName, pNumber }) =>{
+const Information = ({ pName, pNumber, handleDeletion }) =>{
   return(
-    <div>{pName} {pNumber}</div>
+    <div>
+      <div>
+      {pName} {pNumber} 
+      <button onClick={ handleDeletion}>delete</button> 
+      </div>
+      
+    </div>
+    
   )
 }
 
@@ -119,11 +147,21 @@ const App = () => {
     const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
     
     // Is this the best way to do this???
-    if( (persons.filter( person => person.name.toLowerCase() === newPerson.name.toLowerCase() )).length === 0 ){
+    if( ( persons.filter( person => person.name.toLowerCase() === newPerson.name.toLowerCase() ) ).length === 0 ){
+      
+      if(persons.filter( person => person.id === newPerson.id)){
+        let new_id = 1
+        while( persons.map( person_id => person_id.id   ).includes( new_id ) ){
+          new_id++
+        }
+        newPerson.id = new_id
+      }
+      
       personsService
       .create( newPerson )
       .then( response => { 
-        setPersons( persons.concat( response ))
+        //const sortedPersons = persons.sort( (a, b) => { return ( a.id - b.id)  }).concat( response )//sort does not create a copy, but concat does
+        setPersons( persons.concat( response ) )
         setNewName('')
         setNewNumber('')
       })
@@ -143,6 +181,18 @@ const App = () => {
     setSearch(event.target.value)
   }
 
+  const handleDeletion =(id)=>{
+    
+    if( window.confirm(`Delete ${ persons.filter( name => name.id === id)[0].name } ?`)){
+      personsService
+        .deletePerson(id)
+        .then( deleted => {
+          setPersons( persons.filter( person => person.id !== id  ) )
+          return deleted;
+        } )      
+    }
+    
+  }
  return(
     <div>
       <h2>Phonebook</h2>
@@ -153,7 +203,7 @@ const App = () => {
                handleChangeNumber={handleChangeNumber}/>
       <h2>Numbers</h2>
       <div>
-        <InformationTable pSearch={search} persons={persons} /> 
+        <InformationTable pSearch={search} persons={persons} handleDeletion={handleDeletion}/> 
       </div>
       
     </div>
