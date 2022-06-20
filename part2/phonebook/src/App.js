@@ -61,10 +61,9 @@ const Information = ({ pName, pNumber, handleDeletion }) =>{
   return(
     <div>
       <div>
-      {pName} {pNumber} 
-      <button onClick={ handleDeletion}>delete</button> 
+      <span>{pName}{" "}{pNumber}</span>
+      <span><button onClick={ handleDeletion}>delete</button></span>
       </div>
-      
     </div>
     
   )
@@ -158,16 +157,32 @@ const App = () => {
       }
       
       personsService
-      .create( newPerson )
-      .then( response => { 
-        //const sortedPersons = persons.sort( (a, b) => { return ( a.id - b.id)  }).concat( response )//sort does not create a copy, but concat does
-        setPersons( persons.concat( response ) )
-        setNewName('')
-        setNewNumber('')
-      })
+        .create( newPerson )
+        .then( response => { 
+          //const sortedPersons = persons.sort( (a, b) => { return ( a.id - b.id)  }).concat( response )//sort does not create a copy, but concat does
+          setPersons( persons.concat( response ) )
+          setNewName('')
+          setNewNumber('')
+        })
       
     }else{
-      alert(`${newPerson.name} is already added to the phonebook`)
+      if ( window.confirm( `${newPerson.name} is already added to phonebook, replace the old number with a new one?`) ) {
+        const existingPerson = persons.find( person => person.name.toLowerCase() === newPerson.name.toLowerCase() );
+        
+        const modifiedPerson ={ ...existingPerson, number: newPerson.number }
+
+  
+        personsService
+          .update( modifiedPerson, modifiedPerson.id )
+          .then( response =>{
+            //setPersons( persons.concat( response)) //is wrong
+            setPersons( persons.map( person => person.id !== modifiedPerson.id ? person : modifiedPerson))
+            setNewName('')
+            setNewNumber('')
+          })        
+      }
+      
+
     }
   }
 
@@ -189,7 +204,10 @@ const App = () => {
         .then( deleted => {
           setPersons( persons.filter( person => person.id !== id  ) )
           return deleted;
-        } )      
+        } )
+        .catch( error => {
+          setPersons( persons.filter( person => person.id !==id ) )
+        })      
     }
     
   }
