@@ -1,137 +1,26 @@
 
 /**
-2.17: Phonebook step9
-Make it possible for users to delete entries from the phonebook. 
-The deletion can be done through a dedicated button for each person in the phonebook list. 
-You can confirm the action from the user by using the window.confirm method.
-
-
-The associated resource for a person in the backend can be deleted by making an HTTP DELETE 
-request to the resource's URL. 
-
-If we are deleting e.g. a person who has the id 2,
-we would have to make an HTTP DELETE request to the URL localhost:3001/persons/2.
-
-No data is sent with the request.
-
-You can make an HTTP DELETE request with the axios library in the same way that 
-we make all of the other requests.
-
-NB: You can't use the name delete for a variable because it's a reserved word in JavaScript. 
+2.19: Phonebook step11
+  Use the improved error message example from part 2 as a guide to show a notification that 
+  lasts for a few seconds after a successful operation is executed (a person is added or a number is changed)
 */
 
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
 import personsService from './services/persons'
-
-
-const InformationTable = ({pSearch, persons, handleDeletion}) =>{
-  if( pSearch === ''){
-      return (
-        <>
-        {
-          persons.map( person => <Information key={person.id} 
-                                              pName={person.name}
-                                              pNumber={person.number}
-                                              handleDeletion={() => handleDeletion(person.id)}
-                                              /> )
-        }
-        </>
-      )
-  }else{
-    const filteredPersons = persons.filter( person => { 
-      return person.name.toLowerCase().includes( pSearch.toLowerCase() )
-     } )
-    return(
-      <>
-      {
-        filteredPersons.map( person => <Information key={person.id} 
-                                                    pName={person.name} 
-                                                    pNumber={person.number} 
-                                                    handleDeletion={() => handleDeletion(person.id)}
-                                                    /> )
-      }
-      </>
-    )
-  }
-}
-
-
-const Information = ({ pName, pNumber, handleDeletion }) =>{
-  return(
-    <div>
-      <div>
-      <span>{pName}{" "}{pNumber}</span>
-      <span><button onClick={ handleDeletion}>delete</button></span>
-      </div>
-    </div>
-    
-  )
-}
-
-
-const Filter = ({ psearch, handleFilter }) => {
-  return(
-    <>
-      <div>{/**Is this fine outside the form or without a form?*/}
-        filter show with <input 
-                            value={psearch}
-                            placeholder={"Enter a filter"}
-                            onChange={handleFilter}
-                          />
-      </div>
-    </>
-  )
-}
-
-
-const Input = ({text, newInput, placeholder, handleChange}) => {
-  return(
-    <>
-      <div>
-          {text}: <input
-                  value={newInput}
-                  placeholder={placeholder}
-                  onChange={handleChange}                  
-                />
-        </div>
-    </>
-  )
-}
-
-
-const PersonForm = ({ addName, newName, handleChangeName, newNumber, handleChangeNumber }) => {
-  return(
-    <div>
-      
-      <form onSubmit={addName}>
-          <Input text={"name"} newInput={newName} 
-                 placeholder={"Enter a name"}
-                 handleChange={handleChangeName}
-                 />  
-          
-          <Input text={"number"} newInput={newNumber}
-                 placeholder={"Enter a number"} 
-                 handleChange={handleChangeNumber}
-                 />
-        
-        <div>
-          <button type="submit">add</button>
-        </div>
-
-      </form>
-    </div>
-  )
-}
+import Notification from './components/Notification'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
+import InformationTable from './components/InformationTable'
 
 
 const App = () => {
-
 
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch ] = useState('')
+  const [confirmationMess, setConfirmationMess ] = useState(null)
 
   useEffect( () => {
     personsService
@@ -141,13 +30,19 @@ const App = () => {
       } )
   }, [] )
 
+
+  const handleConfirmation =(action, name)=>{
+    const addedMessage = `${action} ${name}`
+    setConfirmationMess(addedMessage)
+    setTimeout( ()=>{ setConfirmationMess( null)}, 5000 )
+  }
+
   const addName =(event)=> {
     event.preventDefault() // Prevents default action of "onSubmit"/submitting forms
     const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
-    
-    // Is this the best way to do this???
+    let addedMessage = '';
+
     if( ( persons.filter( person => person.name.toLowerCase() === newPerson.name.toLowerCase() ) ).length === 0 ){
-      
       if(persons.filter( person => person.id === newPerson.id)){
         let new_id = 1
         while( persons.map( person_id => person_id.id   ).includes( new_id ) ){
@@ -163,15 +58,13 @@ const App = () => {
           setPersons( persons.concat( response ) )
           setNewName('')
           setNewNumber('')
+          handleConfirmation('Added', response.name)
         })
       
     }else{
       if ( window.confirm( `${newPerson.name} is already added to phonebook, replace the old number with a new one?`) ) {
         const existingPerson = persons.find( person => person.name.toLowerCase() === newPerson.name.toLowerCase() );
-        
         const modifiedPerson ={ ...existingPerson, number: newPerson.number }
-
-  
         personsService
           .update( modifiedPerson, modifiedPerson.id )
           .then( response =>{
@@ -179,6 +72,7 @@ const App = () => {
             setPersons( persons.map( person => person.id !== modifiedPerson.id ? person : modifiedPerson))
             setNewName('')
             setNewNumber('')
+            handleConfirmation('Modified', modifiedPerson.name ) 
           })        
       }
       
@@ -197,7 +91,6 @@ const App = () => {
   }
 
   const handleDeletion =(id)=>{
-    
     if( window.confirm(`Delete ${ persons.filter( name => name.id === id)[0].name } ?`)){
       personsService
         .deletePerson(id)
@@ -214,6 +107,7 @@ const App = () => {
  return(
     <div>
       <h2>Phonebook</h2>
+      <Notification message={confirmationMess} />
       <Filter pSearch={search} handleFilter={handleFilter}/>
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} newNumber={newNumber}
