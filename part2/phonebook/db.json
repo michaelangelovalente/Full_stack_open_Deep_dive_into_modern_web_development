@@ -6,6 +6,7 @@
       "id": 5
     },
     {
+<<<<<<< HEAD
       "name": "Giovanni",
       "number": " 325 36678983",
       "id": 10
@@ -79,6 +80,11 @@
       "name": "MichaelAngelo Valente",
       "number": "3884091360",
       "id": 16
+=======
+      "name": "Alan Paul",
+      "number": "555-555",
+      "id": 2
+>>>>>>> 8878fc3 (ex 2.20: The phonebook step12 -done)
     }
   ]
 }

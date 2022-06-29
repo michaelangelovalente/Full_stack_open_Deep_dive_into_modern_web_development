@@ -73,7 +73,23 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             handleConfirmation('Modified', modifiedPerson.name ) 
+<<<<<<< HEAD
           })        
+=======
+          })
+          .catch( error =>{
+              
+              setConfirmationMess(`Information of ${modifiedPerson.name} has already been removed from the server`)
+              setErrorMessage(true)
+              setPersons( persons.filter( person =>{ return person.id !== modifiedPerson.id }) )
+              setTimeout( ()=>{ 
+                setConfirmationMess(null)
+                setErrorMessage(false)
+              },15000)
+            }
+            
+          )       
+>>>>>>> 8878fc3 (ex 2.20: The phonebook step12 -done)
       }
       
 
