@@ -21,6 +21,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch ] = useState('')
   const [confirmationMess, setConfirmationMess ] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect( () => {
     personsService
@@ -73,9 +74,6 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             handleConfirmation('Modified', modifiedPerson.name ) 
-<<<<<<< HEAD
-          })        
-=======
           })
           .catch( error =>{
               
@@ -85,11 +83,10 @@ const App = () => {
               setTimeout( ()=>{ 
                 setConfirmationMess(null)
                 setErrorMessage(false)
-              },15000)
+              },5000)
             }
             
           )       
->>>>>>> 8878fc3 (ex 2.20: The phonebook step12 -done)
       }
       
 
@@ -123,7 +120,7 @@ const App = () => {
  return(
     <div>
       <h2>Phonebook</h2>
-      <Notification message={confirmationMess} />
+      <Notification message={confirmationMess} errorMessage={errorMessage}/>
       <Filter pSearch={search} handleFilter={handleFilter}/>
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} newNumber={newNumber}
